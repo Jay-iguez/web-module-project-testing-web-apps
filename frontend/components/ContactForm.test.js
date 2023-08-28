@@ -56,21 +56,91 @@ test('renders THREE error messages if user enters no values into any fields.', a
 });
 
 test('renders ONE error message if user enters a valid first name and last name but no email.', async () => {
+    render(<ContactForm />)
+    const firstName = screen.getByText('First Name*')
+    const firstNameInput = screen.getByPlaceholderText('Edd')
+    const lastName = screen.getByText('Last Name*')
+    const lastNameInput = screen.getByPlaceholderText('Burke')
+    const email = screen.getByText("Email*")
+    const emailInput = screen.getByPlaceholderText("bluebill1049@hotmail.com")
 
+    userEvent.type(firstNameInput, 'Jayden')
+    userEvent.type(lastNameInput, 'Rodriguez')
+    userEvent.type(emailInput, 'D')
+    userEvent.clear(emailInput)
+
+    const emailError = screen.getByText(/Error: email must be a valid email address./i)
+    expect(firstName).toBeInTheDocument()
+    expect(lastName).toBeInTheDocument()
+    expect(email).toBeInTheDocument()
+    expect(emailError).toBeInTheDocument()
 });
 
 test('renders "email must be a valid email address" if an invalid email is entered', async () => {
+    render(<ContactForm />)
+    const email = screen.getByText('Email*')
+    const emailInput = screen.getByPlaceholderText('bluebill1049@hotmail.com')
 
+    userEvent.type(emailInput, 'nullmaildotcom')
+    
+    const emailError = screen.getByText(/Error: email must be a valid email address./i)
+    expect(email).toBeInTheDocument()
+    expect(emailError).toBeInTheDocument()
 });
 
 test('renders "lastName is a required field" if an last name is not entered and the submit button is clicked', async () => {
+    render(<ContactForm />)
+    const lastName = screen.getByText("Last Name*")
+    const submit = screen.getByText('Submit')
 
+    userEvent.click(submit)
+
+    const lastNameError = screen.getByText(/Error: lastName is a required field/i)
+    expect(lastName).toBeInTheDocument()
+    expect(submit).toBeInTheDocument()
+    expect(lastNameError).toBeInTheDocument()
 });
 
 test('renders all firstName, lastName and email text when submitted. Does NOT render message if message is not submitted.', async () => {
+    render(<ContactForm />)
+    const firstNameInput = screen.getByPlaceholderText('Edd')
+    const lastNameInput = screen.getByPlaceholderText('Burke')
+    const emailInput = screen.getByPlaceholderText('bluebill1049@hotmail.com')
+    const submit = screen.getByText('Submit')
 
+    userEvent.type(firstNameInput, 'Ethan')
+    userEvent.type(lastNameInput, 'Winters')
+    userEvent.type(emailInput, 'ILoveMia@aol.com')
+    userEvent.click(submit)
+
+    const appendedFirstName = screen.getByTestId('firstnameDisplay')
+    const appendedLastName = screen.getByTestId('lastnameDisplay')
+    const appendedEmail = screen.getByTestId('emailDisplay')
+    expect(appendedFirstName).toBeInTheDocument()
+    expect(appendedLastName).toBeInTheDocument()
+    expect(appendedEmail).toBeInTheDocument()
 });
 
 test('renders all fields text when all fields are submitted.', async () => {
+    render(<ContactForm />)
+    const firstNameInput = screen.getByPlaceholderText('Edd')
+    const lastNameInput = screen.getByPlaceholderText('Burke')
+    const emailInput = screen.getByPlaceholderText('bluebill1049@hotmail.com')
+    const messageInput = screen.getByRole('textbox', {name: /message/i})
+    const submit = screen.getByText('Submit')
 
+    userEvent.type(firstNameInput, 'Chris')
+    userEvent.type(lastNameInput, 'Redfield')
+    userEvent.type(emailInput, 'BoulderShoulders@yahoo.com')
+    userEvent.type(messageInput, 'They need to do my character justice bro.')
+    userEvent.click(submit)
+
+    const appendedFirstName = screen.getByTestId('firstnameDisplay')
+    const appendedLastName = screen.getByTestId('lastnameDisplay')
+    const appendedEmail = screen.getByTestId('emailDisplay')
+    const appendedMessage = screen.getByTestId('messageDisplay')
+    expect(appendedFirstName).toBeInTheDocument()
+    expect(appendedLastName).toBeInTheDocument()
+    expect(appendedEmail).toBeInTheDocument()
+    expect(appendedMessage).toBeInTheDocument()
 });
